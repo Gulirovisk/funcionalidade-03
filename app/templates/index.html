@@ -1,0 +1,20 @@
+<div id="animal-info">
+    <h3>Informações do Animal</h3>
+    <p id="animal-data"></p>
+</div>
+
+<script>
+    async function fetchAnimalData(rfid) {
+        const response = await fetch(`/api/animal/${rfid}/`);
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('animal-data').innerHTML = `
+              Nome: ${data.name}<br>
+              Idade: ${data.age}<br>
+              Raça: ${data.breed}
+          `;
+        } else {
+            document.getElementById('animal-data').innerText = 'Animal não encontrado.';
+        }
+    }
+</script>
