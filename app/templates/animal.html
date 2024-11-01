@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dados do Animal</title>
+    <script>
+        async function fetchLatestAnimal() {
+            try {
+                const response = await fetch('/api/latest-animal/');
+                const data = await response.json();
+                document.getElementById('animal-data').innerText = JSON.stringify(data);
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        }
+
+        // Polling a cada 5 segundos
+        setInterval(fetchLatestAnimal, 5000);
+    </script>
+</head>
+<body>
+    <h1>Dados do Animal</h1>
+    <div id="animal-data">Aguardando leitura...</div>
+</body>
+</html>

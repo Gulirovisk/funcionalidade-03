@@ -1,20 +1,90 @@
-<div id="animal-info">
-    <h3>Informações do Animal</h3>
-    <p id="animal-data"></p>
-</div>
-
-<script>
-    async function fetchAnimalData(rfid) {
-        const response = await fetch(`/api/animal/${rfid}/`);
-        if (response.ok) {
-            const data = await response.json();
-            document.getElementById('animal-data').innerHTML = `
-              Nome: ${data.name}<br>
-              Idade: ${data.age}<br>
-              Raça: ${data.breed}
-          `;
-        } else {
-            document.getElementById('animal-data').innerText = 'Animal não encontrado.';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Último Animal Lido</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
         }
-    }
-</script>
+        h1 {
+            color: #333;
+        }
+        #animal-info {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #fff;
+            max-width: 600px;
+        }
+        #animal-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            margin-right: 15px;
+            object-fit: cover;
+            border: 1px solid #ccc;
+        }
+        .info {
+            margin-bottom: 10px;
+        }
+        .info strong {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Último Animal Lido</h1>
+    <div id="animal-info">
+        <img id="animal-photo" src="../../media/bois/pci.png" alt="Foto do Animal">
+        <div>
+            <div class="info"><strong>ID:</strong> <span id="animal-id"></span></div>
+            <div class="info"><strong>Identificação Única:</strong> <span id="identificacao-unica"></span></div>
+            <div class="info"><strong>Nome:</strong> <span id="animal-nome"></span></div>
+            <div class="info"><strong>RFID:</strong> <span id="animal-rfid"></span></div>
+        </div>
+    </div>
+
+    <script>
+        function fetchAnimalData() {
+            fetch('http://192.168.137.128:8000/api/latest-animal/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao buscar dados do animal');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('animal-id').innerText = data.id;
+                    document.getElementById('identificacao-unica').innerText = data.identificacao_unica;
+                    document.getElementById('animal-nome').innerText = data.nome;
+                    document.getElementById('animal-rfid').innerText = data.rfid;
+                    
+                    // Exibe a foto do animal, ou uma imagem padrão se não houver foto
+                    const photoElement = document.getElementById('animal-photo');
+                    if (data.foto) {
+                        photoElement.src = data.foto;
+                    } else {
+                        photoElement.src = 'https://avatars.githubusercontent.com/u/91995232?v=4';
+                        photoElement.alt = 'Foto';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+        }
+
+        // Atualiza os dados a cada 5 segundos
+        setInterval(fetchAnimalData, 5000);
+        // Chama a função uma vez no carregamento da página
+        fetchAnimalData();
+    </script>
+</body>
+</html>
